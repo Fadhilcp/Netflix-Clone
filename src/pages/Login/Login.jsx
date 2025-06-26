@@ -3,6 +3,7 @@ import './Login.css'
 import logo from '../../assets/logo.png'
 import { login , signup } from '../../services/firebase'
 import netflix_spinner from '../../assets/netflix_spinner.gif'
+import { toast } from "react-toastify"
 
 
 const Login = () => {
@@ -17,10 +18,19 @@ const Login = () => {
     const user_auth = async(event) => {
       event.preventDefault()
 
-        if (!email || !password || (signState === 'Sign Up' && !name)) {
-          alert('Please fill out all fields');
-          return;
+      const requiredFields = {
+          email,
+          password,
+          ...(signState === 'Sign Up' && { name }),
         }
+
+        const emptyField = Object.entries(requiredFields).find(([key, value]) => !value)
+
+        if (emptyField) {
+          toast.warn(`Please fill out the ${emptyField[0]} field`)
+          return
+        }
+
 
         setLoading(true)
       if(signState === 'Sign In'){
